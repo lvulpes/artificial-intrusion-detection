@@ -1,0 +1,30 @@
+services:
+  metasploitable:
+    image: tleemcjr/metasploitable2:latest
+    container_name: metasploitable
+    tty: true
+    # Metasploitable2 needs its services started manually upon boot
+    command: sh -c "/bin/services.sh && tail -f /dev/null"
+    networks:
+      lab_net:
+        ipv4_address: 10.10.10.10
+
+  attacker:
+    build:
+        context: .
+        dockerfile: Dockerfile.attacker
+    container_name: attacker
+    tty: true
+    volumes:
+        - ./pcaps:/root/pcaps
+    networks:
+      lab_net:
+        ipv4_address: 10.10.10.20
+
+networks:
+  lab_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.10.0/24
+
