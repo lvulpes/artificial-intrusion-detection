@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   metasploitable:
     image: tleemcjr/metasploitable2:latest
@@ -18,7 +16,7 @@ services:
     container_name: attacker
     tty: true
     volumes:
-        - ./pcaps/root/pcaps
+        - ./pcaps:/root/pcaps
     networks:
       lab_net:
         ipv4_address: 10.10.10.20
