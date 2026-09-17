@@ -39,3 +39,23 @@ pkill tshark
 sudo chown $USER:$USER pcaps/<your-pcap-file>
 ```
 
+## PentestGPT setup instructions
+
+On linux this workflow yielded a usable installation:
+``` terminal
+python -m venv /home/$USER/code/py-venv/pentest
+source /home/$USER/code/py-venv/pentest
+pip3 install git+https://github.com/GreyDGL/PentestGPT
+export GEMINI_API_KEY=<your-api-key>
+pentestgpt-legacy --reasoning-model gemini-3.5-flash --parsing-model gemini-3.5-flash
+```
+However, the Gemini model is too guardrailed to be used for pentesting.
+
+## JA4+ analysis pipeline installation
+Set up a separate virtual environment for generating JA4 fingerprints from our pcaps
+``` terminal
+python -m venv /home/hugin/code/py-venv/ja4analyze
+source /home/hugin/code/py-venv/ja4analyze/bin/activate
+pip install ja4plus
+```
+
