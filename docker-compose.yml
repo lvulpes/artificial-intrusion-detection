@@ -15,8 +15,19 @@ services:
         dockerfile: Dockerfile.attacker
     container_name: attacker
     tty: true
+    # nmap's binary carries file capabilities (incl. cap_net_admin) that exceed
+    # Docker's default capability set, which makes the kernel refuse to exec it.
+    # Granting these keeps nmap -A / OS detection working in the container.
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      # Point AutoPentester's OpenAI-compatible client at the Ollama VM on the LAN.
+      - OPENAI_BASE_URL=http://172.16.25.10:11434/v1
+      - OPENAI_API_KEY=local
     volumes:
         - ./pcaps:/root/pcaps:Z
+        - /home/hugin/code/AutoPentester:/root/autopentester:Z
     networks:
       lab_net:
         ipv4_address: 10.10.10.20
