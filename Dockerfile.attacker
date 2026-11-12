@@ -1,4 +1,46 @@
 FROM kalilinux/kali-rolling
-RUN apt-get update && apt-get install -y metasploit-framework nmap tshark
-CMD ["sleep", "infinity"]
 
+ENV DEBIAN_FRONTEND=noninteractive
+
+# System packages: build deps, the CLI tools AutoPentester shells out to (see the
+# pentestgpt tool registry), and the wordlists it references under
+# /usr/share/wordlists/... . Python itself is NOT taken from Kali (which ships
+# 3.13); uv provides a pinned 3.12 below, which AutoPentester's deps require.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential git curl ca-certificates iputils-ping \
+        metasploit-framework nmap tshark \
+        gobuster ffuf feroxbuster nikto nuclei sqlmap wpscan \
+        dirb dirbuster whatweb wafw00f dirsearch hydra \
+        seclists wordlists \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv (standalone) into /usr/local/bin, then provision Python 3.12
+# independently of the base image's system Python.
+RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh
+RUN uv python install 3.12
+
+# Pre-build the venv on Python 3.12 with the heavy deps baked (cached) into the
+# image. The requirements file must be copied into the build context first:
+#   cp /home/hugin/code/AutoPentester/requirements.txt ./autopentester-requirements.txt
+# --seed puts pip in the venv so the runtime editable install (entrypoint) works.
+COPY autopentester-requirements.txt /tmp/autopentester-requirements.txt
+RUN uv venv --seed --python 3.12 /opt/autopentester-venv \
+    && uv pip install --python /opt/autopentester-venv/bin/python \
+         -r /tmp/autopentester-requirements.txt
+
+# AutoPentester opens a GUI terminal (konsole) for its live PTT window. There is
+# no X server in a container, so stand in a no-op `konsole` that just stays alive:
+# the framework sees the "window" as open, the main loop writes its PTT files and
+# runs normally, and nothing attempts to render to a display. Keeps the AutoPentester
+# source unpatched.
+RUN printf '#!/bin/sh\n# no-op stand-in for the GUI terminal AutoPentester launches\nexec sleep infinity\n' \
+        > /usr/local/bin/konsole \
+    && chmod +x /usr/local/bin/konsole
+
+# The AutoPentester source is bind-mounted at runtime, so the editable install
+# (which creates the `autopentester` console script) happens on start.
+COPY setup/attacker-entrypoint.sh /usr/local/bin/attacker-entrypoint.sh
+RUN chmod +x /usr/local/bin/attacker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/attacker-entrypoint.sh"]
+CMD ["sleep", "infinity"]
