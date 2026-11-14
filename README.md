@@ -11,11 +11,17 @@ docker compose up -d
 2. Start tshark from a separate terminal
 ``` terminal
 docker exec -it attacker tshark -i eth0 -w /root/pcaps/<your-pcap-name> > /dev/null 2>&1 &
+# or
+
+docker exec metasploitable tcpdump -i eth0 -w /tmp/poc.pcap &
+docker exec metasploitable pkill tcpdump
+docker compose cp metasploitable:/tmp/poc.pcap ./pcaps/poc.pcap
 ```
 
 3. Drop into the attacker node
 ``` terminal
 docker exec -it attacker bash
+/opt/autopentester-venv/bin/autopentester
 msfconsole -q
 ```
 
@@ -37,6 +43,12 @@ pkill tshark
 6. If analyzing the pcap, change ownership from root
 ``` terminal
 sudo chown $USER:$USER pcaps/<your-pcap-file>
+```
+
+7. If rebuilding use these commands for attacker or metasploitable
+``` terminal
+docker compose build attacker
+docker compose up -d --force-recreate attacker
 ```
 
 ## PentestGPT setup instructions
