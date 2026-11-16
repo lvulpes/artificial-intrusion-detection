@@ -51,6 +51,12 @@ docker compose build attacker
 docker compose up -d --force-recreate attacker
 ```
 
+8.Get logs and pcaps
+``` terminal
+docker compose cp metasploitable:/tmp/poc-kimi-glm-2.pcap ./pcaps/poc-kimi-glm-2.pcap
+docker compose cp attacker:/logs/pentestGPT_log_1794685758.1498768.txt ./logs/pentestGPT_log_1794685758.1498768.txt
+```
+
 ## PentestGPT setup instructions
 
 On linux this workflow yielded a usable installation:

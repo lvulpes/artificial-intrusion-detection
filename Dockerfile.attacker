@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # 3.13); uv provides a pinned 3.12 below, which AutoPentester's deps require.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential git curl ca-certificates iputils-ping telnet \
+        netcat-traditional ncat \
         metasploit-framework nmap tshark \
         gobuster ffuf feroxbuster nikto nuclei sqlmap wpscan \
         dirb dirbuster whatweb wafw00f dirsearch hydra \
