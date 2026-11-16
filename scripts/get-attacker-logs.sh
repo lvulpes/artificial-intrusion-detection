@@ -15,7 +15,7 @@ TARGET_DIR="./logs/$DIR_NAME"
 PCAP_DIR="./pcaps/$DIR_NAME"
 
 echo "==> 0. Killing the traffic capture..."
-docker exec attacker pkill tcpdump
+docker exec metasploitable pkill tcpdump
 
 echo "==> 1. Creating tar archive inside the 'attacker' container..."
 docker compose exec attacker sh -c "tar -czvf /tmp/all-logs.tar.gz /logs/*"
