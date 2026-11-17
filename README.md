@@ -1,5 +1,5 @@
 # artificial-intrusion-detection
-Passive Identification of Autonomous LLM Agents via JA4+ Network Fingerprinting and Machine Learning
+Passive Identification of Autonomous LLM Agents via Network Fingerprinting and Machine Learning
 
 ## Exploit instructions
 
@@ -8,9 +8,11 @@ Passive Identification of Autonomous LLM Agents via JA4+ Network Fingerprinting 
 docker compose up -d
 ```
 
-2. Start the traffic recording and install the flag
+2. Start the traffic recording and install the flag and allow ports
 ``` terminal
 ./scripts/start-run.sh run-designation-1
+# change ports depending on run
+./scripts/allow-docker-ports.sh 21,6200
 ```
 
 3. Drop into the attacker node and start autopentester, follow prompts
