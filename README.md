@@ -8,53 +8,27 @@ Passive Identification of Autonomous LLM Agents via JA4+ Network Fingerprinting 
 docker compose up -d
 ```
 
-2. Start tshark from a separate terminal
+2. Start the traffic recording and install the flag
 ``` terminal
-docker exec -it attacker tshark -i eth0 -w /root/pcaps/<your-pcap-name> > /dev/null 2>&1 &
-# or
-
-docker exec metasploitable tcpdump -i eth0 -w /tmp/poc.pcap &
-docker exec metasploitable pkill tcpdump
-docker compose cp metasploitable:/tmp/poc.pcap ./pcaps/poc.pcap
+./scripts/start-run.sh run-designation-1
 ```
 
-3. Drop into the attacker node
+3. Drop into the attacker node and start autopentester, follow prompts
 ``` terminal
 docker exec -it attacker bash
 /opt/autopentester-venv/bin/autopentester
-msfconsole -q
 ```
 
-4. On the attacker node, configure your exploit
-``` terminal
-use exploit/unix/ftp/vsftpd_234_backdoor
-set RHOSTS 10.10.10.10
-set LHOST 10.10.10.20
-exploit
-```
-
-5. Finish exploiting and exit
+4. When the flag is found the framework should abort, otherwise CTRL+C and get the logs
 ``` terminal
 exit
-exit
-pkill tshark
+./scripts/get-attacker-logs.sh run-designation-1
 ```
 
-6. If analyzing the pcap, change ownership from root
-``` terminal
-sudo chown $USER:$USER pcaps/<your-pcap-file>
-```
-
-7. If rebuilding use these commands for attacker or metasploitable
+5. If rebuilding use these commands for attacker or metasploitable
 ``` terminal
 docker compose build attacker
 docker compose up -d --force-recreate attacker
-```
-
-8.Get logs and pcaps
-``` terminal
-docker compose cp metasploitable:/tmp/poc-kimi-glm-2.pcap ./pcaps/poc-kimi-glm-2.pcap
-docker compose cp attacker:/logs/pentestGPT_log_1794685758.1498768.txt ./logs/pentestGPT_log_1794685758.1498768.txt
 ```
 
 ## PentestGPT setup instructions
@@ -67,13 +41,3 @@ pip3 install git+https://github.com/GreyDGL/PentestGPT
 export GEMINI_API_KEY=<your-api-key>
 pentestgpt-legacy --reasoning-model gemini-3.5-flash --parsing-model gemini-3.5-flash
 ```
-However, the Gemini model is too guardrailed to be used for pentesting.
-
-## JA4+ analysis pipeline installation
-Set up a separate virtual environment for generating JA4 fingerprints from our pcaps
-``` terminal
-python -m venv /home/hugin/code/py-venv/ja4analyze
-source /home/hugin/code/py-venv/ja4analyze/bin/activate
-pip install ja4plus
-```
-
