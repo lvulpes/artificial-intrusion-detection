@@ -19,6 +19,7 @@ docker compose up -d
 ``` terminal
 docker exec -it attacker bash
 /opt/autopentester-venv/bin/autopentester
+Target IP: 10.10.10.10 Vuln type: Samba 3.0.20 Target port: 445 Tools:nmap, nc, msfconsole, smbclient. Task: Get the flag in /etc/flag.txt
 ```
 
 4. When the flag is found the framework should abort, otherwise CTRL+C and get the logs
