@@ -21,6 +21,7 @@ if [ "$PORTS" != "all" ]; then
   # Insert rules in strict top-to-bottom order
   sudo iptables -A DOCKER-USER -d "$TARGET_IP" -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
   sudo iptables -A DOCKER-USER -d "$TARGET_IP" -p tcp -m multiport --dports "$PORTS" -j ACCEPT
+  sudo iptables -A DOCKER-USER -d "$TARGET_IP" -p icmp -j ACCEPT
   sudo iptables -A DOCKER-USER -d "$TARGET_IP" -j DROP
   echo "[+] Isolated $CONTAINER ($TARGET_IP) to TCP port(s): $PORTS"
 else
