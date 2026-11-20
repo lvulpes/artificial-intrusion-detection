@@ -1,13 +1,10 @@
 #!/bin/bash
 
-# Exit immediately if any command fails
-set -e
-
 # Check if the directory name argument is provided
 if [ -z "$1" ]; then
-    echo "Error: No directory name provided."
-    echo "Usage: $0 <directory_name>"
-    exit 1
+  echo "Error: No directory name provided."
+  echo "Usage: $0 <directory_name>"
+  exit 1
 fi
 
 DIR_NAME="$1"
