@@ -1,0 +1,5 @@
+# Feature extraction parameters (FEATURE_SPEC.md §2.3). These are the defaults.
+burst_thresholds_s: [1, 5]       # idle thresholds tau for burst segmentation (§4.5)
+min_response_bytes: 0            # minimum victim response size for a think-time turn (§4.7)
+min_think_time_s: 0              # minimum think time for a turn (§4.7)
+dedupe_tcp_retransmissions: true # drop TCP retransmissions before think time (§4.7)
